@@ -1,0 +1,41 @@
+services:
+  php:
+    user: "${UID:-1000}:${GID:-1000}"
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+      network: host
+    container_name: symwords-php
+    working_dir: /var/www/backend
+    volumes:
+      - ./backend:/var/www/backend
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: symwords-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/backend
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+
+  db:
+    image: mysql:8
+    container_name: symwords-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
