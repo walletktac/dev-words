@@ -26,17 +26,16 @@ services:
       - php
 
   db:
-    image: mysql:8
-    container_name: symwords-mysql
+    image: postgres:16-alpine
+    container_name: wordbe_db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: symfony
-      MYSQL_USER: symfony
-      MYSQL_PASSWORD: symfony
+      POSTGRES_USER: symfony
+      POSTGRES_PASSWORD: symfony
+      POSTGRES_DB: wordbe
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - dbdata:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  dbdata:
+  postgres_data:
